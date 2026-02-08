@@ -16,7 +16,7 @@ async function recommend(req, res) {
       limit = 10,
     } = req.body;
 
-
+    /* ---------------- VALIDATION ---------------- */
 
     if (!userId || !types || !Array.isArray(types) || types.length === 0) {
       return res.status(400).json({ error: "Invalid userId or types" });
@@ -33,17 +33,11 @@ async function recommend(req, res) {
       return res.status(400).json({ error: "Invalid genre or language" });
     }
 
-
+    /* ---------------- USER BEHAVIOR ---------------- */
 
     const userStats = await getUserStats(userId);
 
-    const scoringContext = {
-      ...userStats,      
-      language: languageCode,
-      mood,
-    };
-
-
+    /* ---------------- FETCH CONTENT ---------------- */
 
     let allContent = [];
 
@@ -57,16 +51,25 @@ async function recommend(req, res) {
       allContent.push(...content);
     }
 
-    /* ---------------- SCORING & RANKING ---------------- */
+    /* ---------------- FILTER + SCORE ---------------- */
 
     const rankedContent = allContent
-      .map((item) => ({
-        ...item,
-        score: calculateScore(item, scoringContext),
-      }))
+      .map((item) => {
+        // 🔥 HARD LANGUAGE FILTER (IMPORTANT FIX)
+        // if (item.original_language !== languageCode) return null;
+
+        const score = calculateScore(
+          item,
+          { language: languageCode, mood },
+          userStats
+        );
+
+        return { ...item, score };
+      })
+      .filter(Boolean) // remove nulls
       .sort((a, b) => b.score - a.score);
 
-
+    /* ---------------- PAGINATION ---------------- */
 
     const start = (page - 1) * limit;
     const end = start + limit;
@@ -75,7 +78,7 @@ async function recommend(req, res) {
       .slice(start, end)
       .map(formatContent);
 
-    res.json({
+    return res.json({
       page,
       limit,
       hasMore: end < rankedContent.length,
@@ -84,7 +87,7 @@ async function recommend(req, res) {
 
   } catch (error) {
     console.error("Recommend API failed:", error);
-    res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error" });
   }
 }
 
