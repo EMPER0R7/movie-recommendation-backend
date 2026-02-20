@@ -51,13 +51,16 @@ async function fetchInternalShows() {
     if (!response.data?.series) return [];
 
     return response.data.series.map(show => ({
-      id: `internal-${show.id}`, // prevent ID collision with TMDB
+      id: `internal-${show.id}`,
       title: show.title,
+      name: show.title, // for TV compatibility
       overview: show.description,
-      poster_path: show.poster,
-      genre_ids: show.genreIds || [],
-      original_language: show.language || "hi",
-      _contentType: "internal",
+      poster_path: show.posterUrl, // ✅ correct field
+      vote_average: 7.5, // give default quality
+      popularity: 500,   // give base popularity
+      genre_ids: [],     // we will ignore genre match for now
+      original_language: "hi", // default since API doesn't give it
+      _contentType: show.isTV ? "tv" : "movie",
       is_internal: true
     }));
 
