@@ -63,9 +63,9 @@ for (const type of types) {
 const internalShows = await fetchInternalShows();
 
 // Optional: filter internal shows by language
-const filteredInternal = internalShows.filter(
-  show => show.original_language === languageCode
-);
+// const filteredInternal = internalShows.filter(
+//   show => show.original_language === languageCode
+// );
 
 // Add to content pool
 allContent.push(...filteredInternal);
