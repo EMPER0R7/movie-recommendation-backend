@@ -90,18 +90,38 @@ allContent.push(...internalShows);
       .sort((a, b) => b.score - a.score);
 
     /* ---------------- PAGINATION ---------------- */
+    /* ---------------- INTERLEAVE INTERNAL + TMDB ---------------- */
+
+    const internal = rankedContent.filter(i => i.is_internal);
+    const external = rankedContent.filter(i => !i.is_internal);
+
+    const mixed = [];
+
+    while (internal.length || external.length) {
+      // Add 2 external (TMDB)
+      for (let i = 0; i < 3 && external.length; i++) {
+        mixed.push(external.shift());
+      }
+
+      // Add 1 internal
+      if (internal.length) {
+        mixed.push(internal.shift());
+      }
+    }
+
+    /* ---------------- PAGINATION ---------------- */
 
     const start = (page - 1) * limit;
     const end = start + limit;
 
-    const paginatedData = rankedContent
+    const paginatedData = mixed
       .slice(start, end)
       .map(formatContent);
 
     return res.json({
       page,
       limit,
-      hasMore: end < rankedContent.length,
+      hasMore: end < mixed.length,
       data: paginatedData,
     });
 
