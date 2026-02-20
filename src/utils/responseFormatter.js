@@ -10,12 +10,17 @@ function formatContent(item) {
     overview: item.overview || "No description available",
 
     // Images
+    // Images
     poster: item.poster_path
-      ? `https://image.tmdb.org/t/p/w500${item.poster_path}`
+      ? item.poster_path.startsWith("http")
+        ? item.poster_path // internal full URL
+        : `https://image.tmdb.org/t/p/w500${item.poster_path}` // TMDB
       : null,
 
     backdrop: item.backdrop_path
-      ? `https://image.tmdb.org/t/p/w780${item.backdrop_path}`
+      ? item.backdrop_path.startsWith("http")
+        ? item.backdrop_path
+        : `https://image.tmdb.org/t/p/w780${item.backdrop_path}`
       : null,
 
     // Metadata

@@ -55,7 +55,8 @@ async function fetchInternalShows() {
       title: show.title,
       name: show.title, // for TV compatibility
       overview: show.description,
-      poster_path: show.posterUrl, // ✅ correct field
+      poster_path: show.posterUrl,
+      is_full_poster: true, // ✅ correct field
       vote_average: 7.5, // give default quality
       popularity: 500,   // give base popularity
       genre_ids: [],     // we will ignore genre match for now

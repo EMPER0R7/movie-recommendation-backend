@@ -84,10 +84,10 @@ function calculateScore(item, context = {}) {
 if (item.is_internal) {
 
   // Safer multiplier (keeps personalization intact)
-  score *= 1.35;
+  score *= 1.10;
 
   // Optional: small base boost to ensure visibility
-  score += 1;
+  // score += 1;
 }
 
 return score;
