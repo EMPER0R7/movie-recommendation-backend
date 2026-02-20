@@ -68,7 +68,7 @@ const internalShows = await fetchInternalShows();
 // );
 
 // Add to content pool
-allContent.push(...filteredInternal);
+allContent.push(...internalShows);
     
 
     /* ---------------- FILTER + SCORE ---------------- */
