@@ -78,8 +78,19 @@ function calculateScore(item, context = {}) {
   if (skipRate > 0.4) {
     score -= weights.HIGH_SKIP_PENALTY;
   }
+  /* ---------------- INTERNAL CONTENT BOOST ---------------- */
 
-  return score;
+// Only boost if it's Bombay Canvas content
+if (item.is_internal) {
+
+  // Safer multiplier (keeps personalization intact)
+  score *= 1.35;
+
+  // Optional: small base boost to ensure visibility
+  score += 1;
+}
+
+return score;
 }
 
 module.exports = { calculateScore };

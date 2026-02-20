@@ -39,5 +39,33 @@ async function discoverContent({ type, genre, language }) {
   }
 }
 
+/**
+ * Fetch Bombay Canvas internal shows
+ */
+async function fetchInternalShows() {
+  try {
+    const response = await axios.get(
+      "https://bombay-canvas-new-dev-v2-1018893063821.asia-south1.run.app/api/all-series"
+    );
 
-module.exports = { discoverContent };
+    if (!response.data?.series) return [];
+
+    return response.data.series.map(show => ({
+      id: `internal-${show.id}`, // prevent ID collision with TMDB
+      title: show.title,
+      overview: show.description,
+      poster_path: show.poster,
+      genre_ids: show.genreIds || [],
+      original_language: show.language || "hi",
+      _contentType: "internal",
+      is_internal: true
+    }));
+
+  } catch (error) {
+    console.error("Internal shows fetch error:", error.message);
+    return [];
+  }
+}
+
+
+module.exports = { discoverContent, fetchInternalShows };

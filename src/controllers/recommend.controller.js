@@ -1,4 +1,4 @@
-const { discoverContent } = require("../services/tmdb.service");
+const { discoverContent, fetchInternalShows  } = require("../services/tmdb.service");
 const { calculateScore } = require("../services/scoring.service");
 const { GENRE_MAP, LANGUAGE_MAP } = require("../utils/mappings");
 const { formatContent } = require("../utils/responseFormatter");
@@ -38,18 +38,38 @@ async function recommend(req, res) {
     const userStats = await getUserStats(userId);
 
     /* ---------------- FETCH CONTENT ---------------- */
+     /* ---------------- FETCH CONTENT ---------------- */
 
-    let allContent = [];
+let allContent = [];
 
-    for (const type of types) {
-      const content = await discoverContent({
-        type,
-        genre: genreId,
-        language: languageCode,
-      });
+// 🔹 1. Fetch TMDB content
+for (const type of types) {
+  const content = await discoverContent({
+    type,
+    genre: genreId,
+    language: languageCode,
+  });
 
-      allContent.push(...content);
-    }
+  // mark as external
+  allContent.push(
+    ...content.map(item => ({
+      ...item,
+      is_internal: false
+    }))
+  );
+}
+
+// 🔹 2. Fetch Bombay Canvas internal shows
+const internalShows = await fetchInternalShows();
+
+// Optional: filter internal shows by language
+const filteredInternal = internalShows.filter(
+  show => show.original_language === languageCode
+);
+
+// Add to content pool
+allContent.push(...filteredInternal);
+    
 
     /* ---------------- FILTER + SCORE ---------------- */
 
