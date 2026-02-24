@@ -109,4 +109,4 @@ async function getTrailer(type, id) {
 }
 
 
-module.exports = { discoverContent, fetchInternalShows };
+module.exports = { discoverContent, fetchInternalShows, getWatchProviders, getTrailer };
