@@ -6,7 +6,7 @@ function formatContent(item) {
     title: item.title || item.name || "Untitled",
     originalTitle: item.original_title || item.original_name,
     watchProviders: item.watchProviders || null,
-    trailer: show.trailerUrl || null,
+    trailer: item.trailerUrl || null,
 
     // Description
     overview: item.overview || "No description available",
