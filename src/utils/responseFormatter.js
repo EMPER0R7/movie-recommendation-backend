@@ -5,6 +5,8 @@ function formatContent(item) {
     // Titles
     title: item.title || item.name || "Untitled",
     originalTitle: item.original_title || item.original_name,
+    watchProviders: item.watchProviders || null,
+    trailer: show.trailerUrl || null,
 
     // Description
     overview: item.overview || "No description available",
@@ -44,7 +46,7 @@ function formatContent(item) {
     director: item.director || null,
 
     // Type
-    type: item.media_type || "movie",
+    type: item._contentType || item.media_type || "movie",
   };
 }
 

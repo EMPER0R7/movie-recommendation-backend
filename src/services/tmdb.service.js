@@ -72,4 +72,41 @@ async function fetchInternalShows() {
 }
 
 
+
+async function getWatchProviders(type, id) {
+  try {
+    const response = await axios.get(
+      `https://api.themoviedb.org/3/${type}/${id}/watch/providers`,
+      {
+        params: { api_key: process.env.TMDB_API_KEY }
+      }
+    );
+
+    return response.data.results?.IN || null; // India
+  } catch (error) {
+    return null;
+  }
+}
+
+
+async function getTrailer(type, id) {
+  try {
+    const response = await axios.get(
+      `https://api.themoviedb.org/3/${type}/${id}/videos`,
+      {
+        params: { api_key: process.env.TMDB_API_KEY }
+      }
+    );
+
+    const trailer = response.data.results.find(
+      v => v.type === "Trailer" && v.site === "YouTube"
+    );
+
+    return trailer ? `https://www.youtube.com/watch?v=${trailer.key}` : null;
+  } catch {
+    return null;
+  }
+}
+
+
 module.exports = { discoverContent, fetchInternalShows };
