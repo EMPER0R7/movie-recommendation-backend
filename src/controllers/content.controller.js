@@ -5,15 +5,22 @@ async function getContentDetails(req, res) {
     const { type, id } = req.params;
 
     // Internal show
-    if (type === "internal") {
-      return res.json({
-        trailer: null, // already included in recommendation
-        watchProviders: {
-          platform: "Bombay Canvas",
-          inApp: true
-        }
-      });
+   if (type === "internal") {
+  // fetch internal show from client API again
+  const response = await axios.get(
+    "https://bombay-canvas-new-dev-v2-1018893063821.asia-south1.run.app/api/all-series"
+  );
+
+  const show = response.data.series.find(s => s.id === id);
+
+  return res.json({
+    trailer: show?.trailerUrl || null,
+    watchProviders: {
+      platform: "Bombay Canvas",
+      inApp: true
     }
+  });
+}
 
     // TMDB content
     const [watchProviders, trailer] = await Promise.all([
